@@ -49,8 +49,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 flex flex-col items-center justify-center p-4">
       <Head>
-        <title>Learn English - Interactive Quiz</title>
-        <meta name="description" content="Practice English with our interactive quiz!" />
+        <title>Learn English - Test interactivo</title>
+        <meta name="description" content="Practice English con el test interactivo." />
       </Head>
       <motion.div
         initial={{ opacity: 0, y: -50 }}
@@ -58,7 +58,7 @@ export default function Home() {
         transition={{ duration: 0.5 }}
         className="max-w-2xl w-full bg-white rounded-2xl shadow-lg p-8"
       >
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">English Learning Quiz</h1>
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">English - Test interactivo</h1>
         {/* Progress Bar */}
         {!quizEnded && (
           <div className="flex justify-center gap-2 mb-4">
