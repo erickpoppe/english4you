@@ -13,6 +13,7 @@ export default function Home() {
   const [selectedAnswer, setSelectedAnswer] = useState('');
   const [feedback, setFeedback] = useState('');
   const [score, setScore] = useState(0);
+  const [quizEnded, setQuizEnded] = useState(false);
 
   const handleAnswer = (option) => {
     setSelectedAnswer(option);
@@ -25,8 +26,20 @@ export default function Home() {
     setTimeout(() => {
       setFeedback('');
       setSelectedAnswer('');
-      setCurrentQuestion((prev) => prev + 1 < quizData.length ? prev + 1 : 0);
+      if (currentQuestion + 1 < quizData.length) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
+        setQuizEnded(true);
+      }
     }, 2000);
+  };
+
+  const handleRestart = () => {
+    setCurrentQuestion(0);
+    setSelectedAnswer('');
+    setFeedback('');
+    setScore(0);
+    setQuizEnded(false);
   };
 
   const baseButtonClass = 'w-full py-3 px-4 rounded-lg text-left text-gray-800 font-medium transition-colors duration-200 border-2';
@@ -45,39 +58,78 @@ export default function Home() {
         className="max-w-2xl w-full bg-white rounded-2xl shadow-lg p-8"
       >
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">English Learning Quiz</h1>
+        {/* Progress Bar */}
+        {!quizEnded && (
+          <div className="flex justify-center gap-2 mb-4">
+            {quizData.map((_, index) => (
+              <motion.div
+                key={index}
+                animate={{
+                  scale: index === currentQuestion ? 1.2 : 1,
+                  backgroundColor: index === currentQuestion ? '#3b82f6' : '#d1d5db',
+                }}
+                transition={{ duration: 0.3 }}
+                className="w-3 h-3 rounded-full"
+              />
+            ))}
+          </div>
+        )}
         <AnimatePresence mode="wait">
-          <motion.div
-            key={currentQuestion}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.3 }}
-          >
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">{quizData[currentQuestion].question}</h2>
-            <div className="grid gap-4">
-              {quizData[currentQuestion].options.map((option) => {
-                const isSelected = selectedAnswer === option;
-                const isCorrect = option === quizData[currentQuestion].answer;
-                const buttonClass = isSelected
-                  ? baseButtonClass + ' ' + (isCorrect ? 'bg-green-100 border-green-500' : 'bg-red-100 border-red-500')
-                  : baseButtonClass + ' bg-gray-50 hover:bg-gray-100 border-gray-300';
-                return (
-                  <motion.button
-                    key={option}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleAnswer(option)}
-                    className={buttonClass}
-                    disabled={selectedAnswer !== ''}
-                  >
-                    {option}
-                  </motion.button>
-                );
-              })}
-            </div>
-          </motion.div>
+          {quizEnded ? (
+            <motion.div
+              key="final-score"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              transition={{ duration: 0.5 }}
+              className="text-center"
+            >
+              <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+                Quiz Complete! You scored {score} out of {quizData.length}!
+              </h2>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleRestart}
+                className="px-6 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200"
+              >
+                Restart Quiz
+              </motion.button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={currentQuestion}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h2 className="text-xl font-semibold text-gray-700 mb-4">{quizData[currentQuestion].question}</h2>
+              <div className="grid gap-4">
+                {quizData[currentQuestion].options.map((option) => {
+                  const isSelected = selectedAnswer === option;
+                  const isCorrect = option === quizData[currentQuestion].answer;
+                  const buttonClass = isSelected
+                    ? baseButtonClass + ' ' + (isCorrect ? 'bg-green-100 border-green-500' : 'bg-red-100 border-red-500')
+                    : baseButtonClass + ' bg-gray-50 hover:bg-gray-100 border-gray-300';
+                  return (
+                    <motion.button
+                      key={option}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleAnswer(option)}
+                      className={buttonClass}
+                      disabled={selectedAnswer !== ''}
+                    >
+                      {option}
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
-        {feedback && (
+        {!quizEnded && feedback && (
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -86,8 +138,11 @@ export default function Home() {
             {feedback}
           </motion.p>
         )}
-        <p className="mt-6 text-center text-gray-600">Score: {score} / {quizData.length}</p>
+        {!quizEnded && (
+          <p className="mt-6 text-center text-gray-600">Score: {score} / {quizData.length}</p>
+        )}
       </motion.div>
     </div>
   );
 }
+
