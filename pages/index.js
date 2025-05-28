@@ -6,6 +6,7 @@ const quizData = [
   { question: "What is the opposite of 'big'?", options: ["Small", "Large", "Tall", "Wide"], answer: "Small" },
   { question: "Which word means 'happy'?", options: ["Sad", "Joyful", "Angry", "Tired"], answer: "Joyful" },
   { question: "What do you call a young dog?", options: ["Kitten", "Puppy", "Cub", "Foal"], answer: "Puppy" },
+  { question: "What do you do when you wake up in the morning?", options: ["Have lunch", "Eat cookies", "Have a sandwich", "Brush my teeth"], answer: "Brush my teeth" },
 ];
 
 export default function Home() {
